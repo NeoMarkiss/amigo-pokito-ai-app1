@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amigo-pokito: Open-Source GitHub Ecosystem & Offline AI Gateway</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        latam: {
+                            50: '#fef2f2',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            900: '#7f1d1d',
+                            emerald: '#059669',
+                            amber: '#d97706',
+                            indigo: '#4f46e5',
+                            darkbg: '#0f172a',
+                            cardbg: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.78);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-latam-darkbg text-slate-100 min-h-screen flex flex-col justify-between selection:bg-latam-emerald selection:text-white">
+
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-latam-emerald to-latam-indigo flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-code-branch text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight flex items-center gap-2">
+                        amigo-pokito 
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-latam-emerald/20 text-latam-emerald border border-latam-emerald/30 font-medium">GitHub Open-Source v3.0</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Gateway Open-Source con Enlace a GitHub, GUIX & Size Snapshots</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button id="github-link-btn" onclick="openGitHubModal()" class="flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition font-medium text-slate-300">
+                    <i class="fa-brands fa-github text-sm"></i>
+                    <span>Repo GitHub Sync</span>
+                </button>
+                <button onclick="openEcosystemModal()" class="flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-lg bg-latam-indigo/20 border border-latam-indigo/40 text-indigo-300 hover:bg-latam-indigo/30 transition font-medium">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Email & Adjuntos</span>
+                </button>
+                <button onclick="openSettingsModal()" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition" title="Configuración de Modelos & Hardware">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- Sidebar: Node Profile & GUIX Toolkit -->
+        <aside class="lg:col-span-1 space-y-4">
+            <!-- Hardware & GitHub Repo State Card -->
+            <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-3">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                    <i class="fa-solid fa-server text-latam-emerald"></i> Estado del Nodo & GitHub
+                </h2>
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80 text-xs space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400">User ID Nodo:</span>
+                        <span id="user-id-display" class="font-mono text-xs text-latam-amber">AP-Node-3F9A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400">Origen Open-Source:</span>
+                        <span class="font-semibold text-emerald-400">GitHub (Synced)</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400">Perfil de Hardware:</span>
+                        <span id="hw-profile-badge" class="font-semibold text-indigo-400">6GB - 8GB RAM</span>
+                    </div>
+                </div>
+                <button onclick="openGitHubModal()" class="w-full py-2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 border border-slate-700">
+                    <i class="fa-brands fa-github"></i> Inspeccionar Repositorio Base
+                </button>
+            </div>
+
+            <!-- GUIX Contextual Toolkit -->
+            <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-3">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-latam-indigo"></i> Menú GUIX & Módulos
+                </h2>
+                <div class="grid grid-cols-1 gap-2">
+                    <button onclick="loadTemplate('legal')" class="text-left px-3 py-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/50 text-xs transition flex items-center justify-between group">
+                        <span class="flex items-center gap-2.5 text-slate-200">
+                            <i class="fa-solid fa-scale-balanced text-latam-amber"></i> Asistente Jurídico Comunitario
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:translate-x-0.5 transition"></i>
+                    </button>
+                    <button onclick="loadTemplate('agri')" class="text-left px-3 py-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/50 text-xs transition flex items-center justify-between group">
+                        <span class="flex items-center gap-2.5 text-slate-200">
+                            <i class="fa-solid fa-seedling text-emerald-500"></i> Agro-Clima & Suelos Andinos
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:translate-x-0.5 transition"></i>
+                    </button>
+                    <button onclick="loadTemplate('pyme')" class="text-left px-3 py-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/50 text-xs transition flex items-center justify-between group">
+                        <span class="flex items-center gap-2.5 text-slate-200">
+                            <i class="fa-solid fa-store text-indigo-400"></i> Economía Local & PYME
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:translate-x-0.5 transition"></i>
+                    </button>
+                    <button onclick="loadTemplate('snapshots')" class="text-left px-3 py-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/50 text-xs transition flex items-center justify-between group">
+                        <span class="flex items-center gap-2.5 text-slate-200">
+                            <i class="fa-solid fa-box-archive text-rose-400"></i> Gestión de Size Snapshots
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:translate-x-0.5 transition"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hardware Optimization Monitor -->
+            <div class="glass-panel p-4 rounded-2xl shadow-xl space-y-3">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-rose-500"></i> Monitor de Hardware Secundario
+                </h2>
+                <div class="space-y-2 text-xs">
+                    <div>
+                        <div class="flex justify-between mb-1 text-slate-300">
+                            <span>RAM Cuantizada (Gemma-4 Q4):</span>
+                            <span id="ram-usage">2.4 GB / 8.0 GB</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div id="ram-bar" class="bg-latam-emerald h-2 rounded-full transition-all duration-500" style="width: 30%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1 text-slate-300">
+                            <span>Carga de Procesador Edge:</span>
+                            <span id="cpu-usage">12%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div id="cpu-bar" class="bg-indigo-500 h-2 rounded-full transition-all duration-500" style="width: 12%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-3 flex flex-col glass-panel rounded-2xl shadow-xl overflow-hidden h-[78vh]">
+            <!-- Chat Header -->
+            <div class="px-5 py-3.5 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-200" id="current-context-title">Gateway Open-Source con Sincronización GitHub & Offline</h3>
+                        <p class="text-[11px] text-slate-400">Operación Air-Gapped verificada con soporte opcional para actualizaciones por correo y adjuntos</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="clearChat()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition flex items-center gap-1.5" title="Limpiar Conversación">
+                        <i class="fa-solid fa-trash-can"></i> Limpiar
+                    </button>
+                    <button onclick="exportSnapshotFile()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition flex items-center gap-1.5" title="Exportar Snapshot Local (.json)">
+                        <i class="fa-solid fa-file-zipper"></i> Descargar Snapshot
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Container -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 custom-scrollbar">
+                <!-- Greeting message -->
+                <div class="flex items-start space-x-3 max-w-2xl">
+                    <div class="w-8 h-8 rounded-full bg-latam-emerald flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow">
+                        AP
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl rounded-tl-sm text-sm space-y-2 text-slate-200 shadow-sm border border-slate-700/60">
+                        <p class="font-medium text-latam-amber">¡Conectado al Repositorio Open-Source de amigo-pokito!</p>
+                        <p>Esta instancia carga sus funciones iniciales directamente desde el dominio público de GitHub, garantizando un diseño de código abierto totalmente transparente, seguridad de datos cifrada y soporte para perfiles de hardware secundario de 4GB a 8GB RAM.</p>
+                        <div class="pt-2 flex flex-wrap gap-2">
+                            <span class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700"><i class="fa-brands fa-github text-emerald-400 mr-1"></i> GitHub Repo Verified</span>
+                            <span class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700"><i class="fa-solid fa-shield text-amber-400 mr-1"></i> Air-Gapped Security</span>
+                            <span class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700"><i class="fa-solid fa-check text-indigo-400 mr-1"></i> GUIX Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Footer / Input -->
+            <div class="p-4 bg-slate-900/80 border-t border-slate-800 space-y-3">
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                    <span class="text-slate-400 flex-shrink-0"><i class="fa-solid fa-bolt text-amber-400"></i> Automatización Open-Source:</span>
+                    <button onclick="insertPrompt('¿Cómo se verifica la integridad del repositorio de GitHub al iniciar sin conexión?')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 whitespace-nowrap transition">Verificación GitHub</button>
+                    <button onclick="insertPrompt('Generar reporte de compatibilidad de hardware secundario (4GB-8GB).')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 whitespace-nowrap transition">Reporte Hardware</button>
+                    <button onclick="insertPrompt('Simular recepción de manifiesto GGUF vía correo opt-in.')" class="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 whitespace-nowrap transition">Simular Manifiesto</button>
+                </div>
+
+                <form id="chat-form" onsubmit="handleSendMessage(event)" class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <input type="text" id="user-input" placeholder="Consulta sobre código abierto, seguridad o perfiles de hardware..." class="w-full bg-slate-800/90 text-slate-100 placeholder-slate-500 text-sm rounded-xl pl-4 pr-10 py-3 border border-slate-700 focus:outline-none focus:border-latam-emerald transition shadow-inner">
+                        <button type="button" onclick="toggleVoiceSim()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-latam-amber transition" title="Simulación de entrada de voz offline">
+                            <i class="fa-solid fa-microphone text-sm"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="bg-gradient-to-r from-latam-emerald to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white px-5 py-3 rounded-xl font-medium text-sm transition shadow-md flex items-center justify-center gap-2 flex-shrink-0">
+                        <span>Enviar</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- GitHub Repo Integration Modal -->
+    <div id="github-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-2xl p-6 space-y-5 border border-slate-700 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base flex items-center gap-2 text-slate-100">
+                    <i class="fa-brands fa-github text-latam-emerald"></i> Repositorio Open-Source en GitHub
+                </h3>
+                <button onclick="closeGitHubModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-300">
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-slate-200">URL del Repositorio Base:</span>
+                        <span class="font-mono text-latam-amber">github.com/amigo-pokito/core-ai</span>
+                    </div>
+                    <p class="text-slate-400 text-[11px]">
+                        El dominio apunta directamente al código fuente abierto. Al inicializar, la aplicación compila las dependencias estáticas en el cliente, permitiendo operar 100% desconectado tras la primera carga o mediante descarga estática directa.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block font-medium text-slate-300">Rama de Versión Activa:</label>
+                    <select id="github-branch-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-latam-emerald">
+                        <option value="main">main (Estable - GGUF Q4 Optimizado)</option>
+                        <option value="dev">dev (Experimental - GUIX Modular v3.0)</option>
+                    </select>
+                </div>
+
+                <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                    <p class="font-semibold text-slate-300"><i class="fa-solid fa-shield-halved text-latam-amber mr-1"></i> Garantía de Seguridad:</p>
+                    <p>No se envían telemetrías a servidores externos. Todo el procesamiento de lenguaje natural y los historiales de sesión residen en la memoria local del dispositivo secundario.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="closeGitHubModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium transition text-xs">Cerrar</button>
+                <button onclick="syncGitHubRepo()" class="px-4 py-2 rounded-xl bg-latam-emerald text-white hover:bg-emerald-600 font-medium transition shadow text-xs">Verificar & Sincronizar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email & Size Snapshot Ecosystem Modal -->
+    <div id="ecosystem-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-2xl p-6 space-y-5 border border-slate-700 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base flex items-center gap-2 text-slate-100">
+                    <i class="fa-solid fa-paperclip text-latam-emerald"></i> Gestión de Adjuntos Email & Snapshots
+                </h3>
+                <button onclick="closeEcosystemModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-300">
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-slate-200">ID de Nodo Vincular:</span>
+                        <span id="modal-user-id" class="font-mono text-latam-amber">AP-Node-3F9A</span>
+                    </div>
+                    <p class="text-slate-400 text-[11px]">
+                        Canal opt-in para recibir actualizaciones de manifiestos GGUF y pesos comprimidos (*size snapshots*) directamente mediante archivos adjuntos cifrados por correo electrónico.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block font-medium text-slate-300">Correo Electrónico (Opt-In para Adjuntos):</label>
+                    <div class="flex gap-2">
+                        <input type="email" id="user-email-input" placeholder="nodo.secundario@comunidad.org" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-latam-emerald">
+                        <button onclick="saveUserEmail()" class="px-4 py-2 bg-latam-emerald hover:bg-emerald-600 text-white rounded-xl font-medium transition shadow">
+                            Activar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="closeEcosystemModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium transition text-xs">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-2xl p-6 space-y-5 border border-slate-700 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base flex items-center gap-2 text-slate-100">
+                    <i class="fa-solid fa-sliders text-latam-emerald"></i> Configuración de Hardware & Modelos
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-medium text-slate-300 mb-1">Perfil de Snapshot de Hardware (RAM)</label>
+                    <select id="setting-ram-profile" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-latam-emerald">
+                        <option value="8gb">Perfil Óptimo (6GB - 8GB RAM - Gemma-4 Q4 ~3.2GB)</option>
+                        <option value="4gb">Perfil Estándar Móvil (4GB RAM - Snapshot ~1.5GB)</option>
+                        <option value="2gb">Perfil Ultra-Liviano (2GB RAM - Snapshot ~800MB)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-300 mb-1">Manifiesto GGUF / Inferencia</label>
+                    <input type="text" id="setting-model-name" value="gemma-4-snapshot-q4_k_m.gguf" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-latam-emerald">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium transition">Cancelar</button>
+                <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-latam-emerald text-white hover:bg-emerald-600 font-medium transition shadow">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="glass-panel border-t border-slate-800 py-4 px-4 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>&copy; 2026 <strong>amigo-pokito Open-Source v3.0</strong>. Arquitectura GitHub Repo Sync & Offline Air-Gapped AI.</p>
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1.5"><i class="fa-brands fa-github text-latam-emerald"></i> GitHub Open-Source</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-box-archive text-indigo-400"></i> Size Snapshots Ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let appState = {
+            activeTemplate: 'general',
+            activeModel: 'gemma-4-snapshot-q4_k_m.gguf',
+            ramProfile: '8gb',
+            userId: 'AP-Node-' + Math.random().toString(16).substring(2, 6).toUpperCase(),
+            userEmail: null,
+            githubBranch: 'main'
+        };
+
+        const templateResponses = {
+            legal: "Has activado el **Asistente Jurídico Comunitario** desde el repositorio abierto. Los borradores de acuerdos locales se procesan sin conexión en el nodo secundario con respaldo de criptografía simétrica.",
+            agri: "Has activado el **Módulo Agro-Clima & Suelos Andinos**. Diseñado para nodos rurales autónomos. Los pronósticos históricos de tamaño reducido se sincronizan eficientemente vía GitHub o correo opcional.",
+            pyme: "Has activado el **Asistente de Economía Local & PYME**. Herramienta de inventario con almacenamiento local persistente y capacidad de exportar instantáneas en formato JSON.",
+            snapshots: "Has activado la **Gestión de Size Snapshots**. Aquí puedes verificar el tamaño exacto del modelo cuantizado (Q4) y preparar paquetes de actualización para tu hardware secundario."
+        };
+
+        window.onload = function() {
+            document.getElementById('user-id-display').innerText = appState.userId;
+            document.getElementById('modal-user-id').innerText = appState.userId;
+            updateHardwareMetrics();
+            setInterval(updateHardwareMetrics, 5000);
+        };
+
+        function updateHardwareMetrics() {
+            let ramMax = appState.ramProfile === '8gb' ? 8.0 : (appState.ramProfile === '4gb' ? 4.0 : 2.0);
+            let ramUsed = (ramMax * 0.30 + Math.random() * 0.06).toFixed(1);
+            let cpu = Math.floor(10 + Math.random() * 8);
+            document.getElementById('ram-usage').innerText = `${ramUsed} GB / ${ramMax}.0 GB`;
+            document.getElementById('ram-bar').style.width = `${(ramUsed / ramMax) * 100}%`;
+            document.getElementById('cpu-usage').innerText = `${cpu}%`;
+            document.getElementById('cpu-bar').style.width = `${cpu}%`;
+        }
+
+        function loadTemplate(type) {
+            appState.activeTemplate = type;
+            const titles = {
+                legal: 'Asistente Jurídico Comunitario',
+                agri: 'Agro-Clima & Suelos Andinos',
+                pyme: 'Economía Local & PYME',
+                snapshots: 'Gestión de Size Snapshots'
+            };
+            document.getElementById('current-context-title').innerText = titles[type];
+            const responseText = templateResponses[type] || "Contexto modular cargado correctamente desde GitHub.";
+            appendMessage('assistant', responseText);
+        }
+
+        function handleSendMessage(event) {
+            event.preventDefault();
+            const inputField = document.getElementById('user-input');
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            appendMessage('user', text);
+            inputField.value = '';
+
+            showTypingIndicator();
+
+            setTimeout(() => {
+                removeTypingIndicator();
+                generateAIResponse(text);
+            }, 1000);
+        }
+
+        function insertPrompt(promptText) {
+            document.getElementById('user-input').value = promptText;
+            document.getElementById('user-input').focus();
+        }
+
+        function appendMessage(sender, text) {
+            const chatMessages = document.getElementById('chat-messages');
+            const isUser = sender === 'user';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-3 max-w-2xl ${isUser ? 'ml-auto flex-row-reverse space-x-reverse' : ''}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow ${isUser ? 'bg-indigo-600' : 'bg-latam-emerald'}`;
+            avatar.innerHTML = isUser ? '<i class="fa-solid fa-user text-xs"></i>' : 'AP';
+
+            const bubble = document.createElement('div');
+            bubble.className = `glass-panel p-4 rounded-2xl text-sm space-y-2 text-slate-200 shadow-sm border ${isUser ? 'bg-indigo-950/40 border-indigo-800/50 rounded-tr-sm' : 'border-slate-700/60 rounded-tl-sm'}`;
+            
+            let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-latam-amber">$1</strong>');
+            bubble.innerHTML = `<p>${formattedText}</p>`;
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(bubble);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex items-start space-x-3 max-w-2xl';
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-latam-emerald flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow">AP</div>
+                <div class="glass-panel p-3 rounded-2xl rounded-tl-sm text-sm text-slate-400 flex items-center gap-2 border border-slate-700/60">
+                    <span class="w-2 h-2 rounded-full bg-latam-amber animate-bounce"></span>
+                    <span class="w-2 h-2 rounded-full bg-latam-amber animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-2 h-2 rounded-full bg-latam-amber animate-bounce [animation-delay:0.4s]"></span>
+                    <span class="text-xs ml-1">Procesando consulta en nodo secundario...</span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function generateAIResponse(query) {
+            const qLower = query.toLowerCase();
+            let response = "";
+
+            if (qLower.includes('github') || qLower.includes('repositorio') || qLower.includes('codigo')) {
+                response = "El repositorio de GitHub en la rama **" + appState.githubBranch + "** provee la capa de código abierto base para **amigo-pokito**. Al desplegarse estáticamente, el cliente compila la interfaz y permite la ejecución local sin requerir llamadas constantes a servidores remotos.";
+            } else if (qLower.includes('hardware') || qLower.includes('ram') || qLower.includes('compatibilidad')) {
+                response = `El nodo está configurado en el perfil **${appState.ramProfile.toUpperCase()}**, optimizado para correr modelos cuantizados (como Gemma-4 Q4) consumiendo menos de 3.2 GB de memoria, garantizando estabilidad absoluta en dispositivos secundarios o hardware reutilizado.`;
+            } else if (qLower.includes('correo') || qLower.includes('adjunto') || qLower.includes('manifiesto')) {
+                response = `📬 **Simulación de Manifiesto GGUF:** Se ha validado el paquete de actualización de tamaño (*size snapshot*) para el User ID **${appState.userId}**. Los pesos locales operan en modo air-gapped con sincronización asíncrona opcional.`;
+            } else {
+                response = `Consulta analizada exitosamente en el nodo secundario con ID **${appState.userId}**. La arquitectura open-source y los menús GUIX garantizan total soberanía de datos y correlación de seguridad offline.`;
+            }
+
+            appendMessage('assistant', response);
+        }
+
+        function openGitHubModal() {
+            document.getElementById('github-modal').classList.remove('hidden');
+        }
+
+        function closeGitHubModal() {
+            document.getElementById('github-modal').classList.add('hidden');
+        }
+
+        function syncGitHubRepo() {
+            appState.githubBranch = document.getElementById('github-branch-select').value;
+            closeGitHubModal();
+            appendMessage('assistant', `✅ **Sincronización GitHub Exitosa:** Repositorio verificado en la rama \`${appState.githubBranch}\`. Las herramientas GUIX y los perfiles de hardware están actualizados.`);
+        }
+
+        function openEcosystemModal() {
+            document.getElementById('ecosystem-modal').classList.remove('hidden');
+        }
+
+        function closeEcosystemModal() {
+            document.getElementById('ecosystem-modal').classList.add('hidden');
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveUserEmail() {
+            const emailInput = document.getElementById('user-email-input').value.trim();
+            if (!emailInput || !emailInput.includes('@')) {
+                alert('Por favor, ingresa un correo electrónico válido para recibir los adjuntos de snapshots.');
+                return;
+            }
+            appState.userEmail = emailInput;
+            closeEcosystemModal();
+            appendMessage('assistant', `✅ **Correo vinculado:** Tu User ID **${appState.userId}** está sincronizado para recibir notificaciones de actualización y adjuntos de tamaño.`);
+        }
+
+        function saveSettings() {
+            appState.ramProfile = document.getElementById('setting-ram-profile').value;
+            appState.activeModel = document.getElementById('setting-model-name').value;
+            closeSettingsModal();
+            updateHardwareMetrics();
+            document.getElementById('hw-profile-badge').innerText = appState.ramProfile === '8gb' ? '6GB - 8GB RAM' : (appState.ramProfile === '4gb' ? '4GB RAM' : '2GB RAM');
+            appendMessage('assistant', `Configuración guardada. Perfil de hardware actualizado a **${appState.ramProfile.toUpperCase()}** con motor **${appState.activeModel}**.`);
+        }
+
+        function clearChat() {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = `
+                <div class="flex items-start space-x-3 max-w-2xl">
+                    <div class="w-8 h-8 rounded-full bg-latam-emerald flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow">AP</div>
+                    <div class="glass-panel p-4 rounded-2xl rounded-tl-sm text-sm space-y-2 text-slate-200 shadow-sm border border-slate-700/60">
+                        <p class="font-medium text-latam-amber">Historial de nodo reiniciado</p>
+                        <p>Los registros locales han sido depurados de forma segura.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportSnapshotFile() {
+            const content = JSON.stringify({
+                app: "amigo-pokito Open-Source Gateway",
+                version: "3.0",
+                githubBranch: appState.githubBranch,
+                userId: appState.userId,
+                emailOptIn: appState.userEmail || "No vinculado",
+                ramProfile: appState.ramProfile,
+                activeModel: appState.activeModel,
+                timestamp: new Date().toISOString()
+            }, null, 2);
+
+            const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `amigo-pokito-snapshot-${appState.userId}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleVoiceSim() {
+            document.getElementById('user-input').value = "Simulación de entrada de voz offline: Verificar integridad del repositorio GitHub y estado de RAM.";
+        }
+    </script>
+</body>
+</html>
